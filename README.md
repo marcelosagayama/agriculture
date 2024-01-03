@@ -3,5 +3,7 @@
 #### 1 - Clone project
 #### 2 - npm install
 #### 3 - Adjust .env file
-#### 4 - npm run swagger
-#### 5 - npm run dev
+#### 4 - node ace migration:run
+#### 5 - node ace db:seed
+#### 6 - npm run swagger
+#### 7 - npm run dev

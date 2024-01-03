@@ -7,7 +7,7 @@ export default class extends BaseSeeder {
   public async run() {
     const ruralProducerSeeder: RuralProducerType[] = [
       {
-        documentNumber: '123',
+        documentNumber: '58407595039',
         producerName: 'João',
         farmName: 'Fazenda João',
         city: 'São Paulo',
@@ -15,6 +15,16 @@ export default class extends BaseSeeder {
         totalHectares: 12,
         arableHectares: 11,
         vegetationHectares: 1,
+      },
+      {
+        documentNumber: '35296430093',
+        producerName: 'José',
+        farmName: 'Fazenda José',
+        city: 'Diadema',
+        state: 'São Paulo',
+        totalHectares: 20,
+        arableHectares: 16,
+        vegetationHectares: 4,
       },
     ]
 
