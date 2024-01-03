@@ -1,13 +1,13 @@
 import RuralProducer from 'App/Models/RuralProducer'
 
-export default class ListController {
+export default class FarmsQuantitiesController {
   /**
    * @swagger
-   *  /rural-producers:
+   *  /dashboard/farm-quantities:
    *     get:
    *       tags:
-   *         - Rural Producer
-   *       description: Return a list of rural producers
+   *         - Dashboard
+   *       description: Return total farms
    *       produces:
    *         - application/json
    *       responses:
@@ -15,6 +15,7 @@ export default class ListController {
    *           description: Ok
    */
   public async index() {
-    return await RuralProducer.query().preload('cropsIds')
+    const total = await RuralProducer.all()
+    return { total: total.length ?? 0 }
   }
 }

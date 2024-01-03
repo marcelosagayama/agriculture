@@ -19,3 +19,4 @@
 */
 
 import './rural_producers_routes'
+import './dashboard_routes'
