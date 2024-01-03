@@ -1,4 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import EditValidator from './Validator/EditValidator'
 
 import RuralProducer from 'App/Models/RuralProducer'
 
@@ -20,7 +21,7 @@ export default class EditController {
    *       requestBody:
    *         required: true
    *         content:
-   *           multipart/form-data:
+   *           application/json:
    *             schema:
    *               type: object
    *               allowEmptyValue: false
@@ -74,14 +75,28 @@ export default class EditController {
       return response.status(404)
     }
 
-    const payload = request.all()
-    ruralProducer.merge({ ...payload })
+    const validatedData = await request.validate(EditValidator)
 
-    if (payload.cropsIds !== undefined) {
+    if (
+      validatedData.totalHectares &&
+      validatedData.arableHectares &&
+      validatedData.vegetationHectares
+    ) {
+      if (
+        validatedData.totalHectares <
+        validatedData.arableHectares + validatedData.vegetationHectares
+      ) {
+        return response.status(400).send('Total area must be larger or equal than other areas sum')
+      }
+    }
+
+    ruralProducer.merge({ ...validatedData })
+
+    if (validatedData.cropsIds !== undefined) {
       await ruralProducer.related('cropsIds').detach()
 
-      if (payload.cropsIds) {
-        await ruralProducer.related('cropsIds').attach(payload.cropsIds.split(','))
+      if (validatedData.cropsIds) {
+        await ruralProducer.related('cropsIds').attach(validatedData.cropsIds)
       }
     }
 

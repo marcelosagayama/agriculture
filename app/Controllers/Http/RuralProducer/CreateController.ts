@@ -1,4 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import CreateValidator from './Validator/CreateValidator'
 
 import RuralProducer from 'App/Models/RuralProducer'
 
@@ -13,7 +14,7 @@ export default class CreateController {
    *       requestBody:
    *         required: true
    *         content:
-   *           multipart/form-data:
+   *           application/json:
    *             schema:
    *               type: object
    *               properties:
@@ -71,12 +72,20 @@ export default class CreateController {
    *         422:
    *           description: Invalid payload
    */
-  public async index({ request }: HttpContextContract) {
-    const payload = request.all()
-    const ruralProducer = await RuralProducer.create(payload)
+  public async index({ request, response }: HttpContextContract) {
+    const validatedData = await request.validate(CreateValidator)
 
-    if (payload.cropsIds && payload.cropsIds.length > 0) {
-      await ruralProducer.related('cropsIds').attach(payload.cropsIds.split(','))
+    if (
+      validatedData.totalHectares <
+      validatedData.arableHectares + validatedData.vegetationHectares
+    ) {
+      return response.status(400).send('Total area must be larger or equal than other areas sum')
+    }
+
+    const ruralProducer = await RuralProducer.create(validatedData)
+
+    if (validatedData.cropsIds && validatedData.cropsIds.length > 0) {
+      await ruralProducer.related('cropsIds').attach(validatedData.cropsIds)
     }
 
     await ruralProducer?.load('cropsIds')
